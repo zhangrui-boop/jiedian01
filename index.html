@@ -1,620 +1,475 @@
+
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>星芒集 - 独一无二的个人展示页</title>
-    <!-- 外部样式库（图标+动画） -->
-    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>星穹迷宫 | 独一无二的数字宇宙</title>
     <style>
-        /* 全局样式重置与基础配置 */
+        /* 声明CSS变量 - 确保唯一性 */
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #0f4c81;
+            --accent: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --light: #f1f5f9;
+        }
+
+        /* 重置基本样式 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "Microsoft Yahei", "PingFang SC", sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: #0a0a1a;
-            color: #f0f0f0;
+            background-color: var(--dark);
+            color: var(--light);
             overflow-x: hidden;
-            position: relative;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(25, 118, 210, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(168, 85, 245, 0.1) 0%, transparent 40%);
+            min-height: 100vh;
+            perspective: 1000px;
+            overflow-y: auto;
         }
 
-        /* 粒子背景容器 */
-        #particle-bg {
+        /* 星空背景 */
+        .star-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
             pointer-events: none;
+            z-index: -1;
         }
 
-        /* 导航栏样式 */
-        .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 999;
-            background: rgba(10, 10, 26, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 1rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(137, 43, 226, 0.3);
-        }
-
-        .navbar .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #8a2be2;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .navbar .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .navbar .nav-links a {
-            color: #f0f0f0;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .navbar .nav-links a::after {
-            content: "";
+        .star {
             position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #8a2be2;
-            transition: width 0.3s ease;
-        }
-
-        .navbar .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .navbar .nav-links a:hover {
-            color: #cba6f7;
-        }
-
-        /* 主容器 */
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 5%;
-        }
-
-        /* 英雄区域 */
-        .hero {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 5rem 0;
-            margin-bottom: 3rem;
-        }
-
-        .hero .avatar {
-            width: 150px;
-            height: 150px;
             border-radius: 50%;
-            border: 3px solid #8a2be2;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 0 20px rgba(137, 43, 226, 0.5);
-            transition: transform 0.5s ease;
+            background-color: var(--light);
+            animation: twinkle var(--duration) infinite ease-in-out;
         }
 
-        .hero .avatar:hover {
-            transform: scale(1.05);
+        /* 3D迷宫容器 */
+        .maze-container {
+            max-width: 1200px;
+            margin: 60px auto 30px;
+            padding: 0 20px;
+            position: relative;
         }
 
-        .hero .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(90deg, #8a2be2, #cba6f7, #8a2be2);
-            background-size: 200% 100%;
+        /* 迷宫标题 */
+        .maze-title {
+            text-align: center;
+            margin: 40px 0 50px;
+            font-size: 3.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: gradientMove 3s infinite linear;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            animation: title-float 4s ease-in-out infinite;
         }
 
-        .hero p {
+        /* 迷宫说明 */
+        .maze-desc {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 60px;
             font-size: 1.2rem;
-            color: #b0b0c0;
-            max-width: 600px;
             line-height: 1.6;
+            opacity: 0.9;
+            letter-spacing: 0.5px;
         }
 
-        /* 渐变文字动画 */
-        @keyframes gradientMove {
-            0% {
-                background-position: 0% 0%;
-            }
-            100% {
-                background-position: 200% 0%;
-            }
-        }
-
-        /* 相册区域 */
-        .album {
-            margin: 5rem 0;
-        }
-
-        .album .section-title {
-            font-size: 2rem;
-            text-align: center;
-            margin-bottom: 3rem;
-            position: relative;
-        }
-
-        .album .section-title::after {
-            content: "";
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background: #8a2be2;
-            border-radius: 2px;
-        }
-
-        .album .card-grid {
+        /* 迷宫网格 */
+        .maze-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 12px;
+            margin-top: 30px;
         }
 
-        /* 3D卡片样式 */
-        .album .card {
-            perspective: 1000px;
-            height: 350px;
-        }
-
-        .album .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s ease;
-            transform-style: preserve-3d;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-        }
-
-        .album .card:hover .card-inner {
-            transform: rotateY(180deg);
-        }
-
-        .album .card-front,
-        .album .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 10px;
+        .cell {
+            height: 120px;
+            border-radius: 12px;
             overflow: hidden;
-        }
-
-        .album .card-front {
-            background: #121228;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .album .card-front img {
-            height: 70%;
-            width: 100%;
-            object-fit: cover;
-        }
-
-        .album .card-front .card-title {
-            padding: 1rem;
-            text-align: center;
-            font-weight: 600;
-            color: #cba6f7;
-        }
-
-        .album .card-back {
-            background: #1a1a38;
-            transform: rotateY(180deg);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            border: 1px solid rgba(137, 43, 226, 0.4);
-        }
-
-        .album .card-back p {
-            color: #b0b0c0;
-            text-align: center;
-            line-height: 1.6;
-        }
-
-        /* 联系区域 */
-        .contact {
-            margin: 5rem 0;
-            padding: 3rem;
-            background: rgba(18, 18, 40, 0.6);
-            border-radius: 15px;
-            border: 1px solid rgba(137, 43, 226, 0.3);
-            backdrop-filter: blur(5px);
-        }
-
-        .contact .section-title {
-            font-size: 2rem;
-            text-align: center;
-            margin-bottom: 3rem;
             position: relative;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            background-size: cover;
+            background-position: center;
+            transform: translateZ(0);
         }
 
-        .contact .section-title::after {
-            content: "";
+        .cell:hover {
+            transform: scale(1.03) translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent);
+            z-index: 10;
+        }
+
+        .cell-content {
             position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background: #8a2be2;
-            border-radius: 2px;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            z-index: 2;
         }
 
-        .contact .contact-links {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            flex-wrap: wrap;
+        .cell-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+            color: var(--accent);
         }
 
-        .contact .contact-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            transition: transform 0.3s ease;
-        }
-
-        .contact .contact-item:hover {
-            transform: translateY(-5px);
-        }
-
-        .contact .contact-item .icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: rgba(137, 43, 226, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: #8a2be2;
-            border: 1px solid rgba(137, 43, 226, 0.5);
-            box-shadow: 0 0 10px rgba(137, 43, 226, 0.3);
-        }
-
-        .contact .contact-item a {
-            color: #f0f0f0;
-            text-decoration: none;
+        .cell-desc {
             font-size: 1rem;
-            transition: color 0.3s ease;
+            opacity: 0.85;
+            line-height: 1.4;
         }
 
-        .contact .contact-item a:hover {
-            color: #cba6f7;
+        /* 3D效果 */
+        .cell-3d {
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
         }
 
-        /* 页脚 */
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            background: rgba(10, 10, 26, 0.8);
-            border-top: 1px solid rgba(137, 43, 226, 0.3);
-            margin-top: 3rem;
+        .cell-face {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--light);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
         }
 
-        .footer p {
-            color: #b0b0c0;
-            font-size: 0.9rem;
+        .face-top {
+            transform: rotateX(90deg) translateZ(60px);
+            background: linear-gradient(135deg, rgba(29, 43, 155, 0.9), rgba(15, 72, 129, 0.9));
         }
 
-        /* 响应式布局适配 */
+        .face-front {
+            background: linear-gradient(135deg, rgba(22, 50, 113, 0.9), rgba(12, 28, 79, 0.9));
+        }
+
+        .face-right {
+            transform: rotateY(90deg) translateZ(60px);
+            background: linear-gradient(135deg, rgba(43, 55, 123, 0.9), rgba(25, 43, 92, 0.9));
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .maze-grid {
+                grid-template-columns: repeat(8, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
-            .navbar .nav-links {
-                gap: 1rem;
+            .maze-grid {
+                grid-template-columns: repeat(6, 1fr);
             }
-
-            .hero h1 {
-                font-size: 2rem;
+            .cell {
+                height: 100px;
             }
-
-            .hero p {
-                font-size: 1rem;
+            .cell-title {
+                font-size: 1.2rem;
             }
-
-            .album .card-grid {
-                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            }
-
-            .contact {
-                padding: 2rem 1rem;
-            }
-
-            .contact .contact-links {
-                gap: 2rem;
+            .maze-title {
+                font-size: 3.2rem;
             }
         }
 
         @media (max-width: 480px) {
-            .navbar {
-                flex-direction: column;
-                gap: 1rem;
+            .maze-grid {
+                grid-template-columns: repeat(4, 1fr);
             }
+            .cell {
+                height: 90px;
+            }
+            .maze-title {
+                font-size: 2.6rem;
+            }
+            .maze-desc {
+                font-size: 1.1rem;
+            }
+        }
 
-            .hero .avatar {
-                width: 120px;
-                height: 120px;
-            }
+        /* 动画定义 */
+        @keyframes twinkle {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
 
-            .hero h1 {
-                font-size: 1.8rem;
-            }
+        @keyframes title-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
 
-            .album .card {
-                height: 300px;
-            }
+        @keyframes glow {
+            0% { text-shadow: 0 0 10px rgba(139, 92, 246, 0.2); }
+            50% { text-shadow: 0 0 20px rgba(139, 92, 246, 0.6); }
+            100% { text-shadow: 0 0 10px rgba(139, 92, 246, 0.2); }
+        }
+
+        /* 特殊效果 */
+        .glow {
+            animation: glow 3s infinite;
+        }
+
+        /* 鼠标悬停效果 */
+        .cell:hover .cell-3d {
+            transform: rotateX(35deg) rotateY(35deg);
+        }
+
+        /* 404页 */
+        .error {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--dark), #0a0f2b);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px var(--accent);
+        }
+
+        .error-text {
+            font-weight: 900;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: error-appear 1s 1.5s forwards;
+        }
+
+        .error-btn {
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transform: scale(0.9);
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .error-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.7);
+        }
+
+        /* 隐藏元素 */
+        .hidden {
+            display: none;
+        }
+
+        /* 粒子效果 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+            opacity: 0.2;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: move-particle 10s infinite linear;
+        }
+
+        @keyframes move-particle {
+            0% { transform: translate(0, 0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translate(100px, 100px); opacity: 0; }
+        }
+
+        /* 联系按钮 */
+        .contact-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.6);
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s;
+        }
+
+        .contact-btn:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.9);
+        }
+
+        /* 水印 */
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 1.2rem;
+            opacity: 0.1;
+            letter-spacing: 3px;
+            z-index: -1;
         }
     </style>
 </head>
 <body>
-    <!-- 粒子背景 -->
-    <div id="particle-bg"></div>
-
-    <!-- 导航栏 -->
-    <nav class="navbar">
-        <div class="logo">
-            <i class="fas fa-star"></i>
-            <span>星芒集</span>
-        </div>
-        <div class="nav-links">
-            <a href="#home">首页</a>
-            <a href="#album">相册</a>
-            <a href="#contact">联系我</a>
-        </div>
-    </nav>
-
-    <!-- 主容器 -->
-    <div class="container">
-        <!-- 英雄区域 -->
-        <section class="hero" id="home">
-            <div class="avatar">
-                <img src="https://picsum.photos/200/200?random=1" alt="个人头像">
-            </div>
-            <h1>生活印记</h1>
-            <p></p>
-        </section>
-
-        <!-- 相册区域 -->
-        <section class="album" id="album">
-            <h2 class="section-title">我的美好瞬间</h2>
-            <div class="card-grid">
-                <!-- 相册卡片1 -->
-                <div class="card">
-                    <div class="card-inner">
-                        <div class="card-front">
-                            <img src="https://picsum.photos/300/200?random=2" alt="风景照片1">
-                            <div class="card-title">山间晨雾</div>
-                        </div>
-                        <div class="card-back">
-                            <p>清晨的山间被薄雾笼罩，阳光穿透云层，洒下温柔的光影，这是一场与自然的温柔邂逅</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- 相册卡片2 -->
-                <div class="card">
-                    <div class="card-inner">
-                        <div class="card-front">
-                            <img src="https://picsum.photos/300/200?random=3" alt="风景照片2">
-                            <div class="card-title">海边落日</div>
-                        </div>
-                        <div class="card-back">
-                            <p>夕阳将海面染成暖橙色，海浪轻轻拍打着沙滩，这一刻，时间仿佛都静止了</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- 相册卡片3 -->
-                <div class="card">
-                    <div class="card-inner">
-                        <div class="card-front">
-                            <img src="https://picsum.photos/300/200?random=4" alt="风景照片3">
-                            <div class="card-title">森林秘境</div>
-                        </div>
-                        <div class="card-back">
-                            <p>茂密的森林里，绿植肆意生长，阳光透过枝叶的缝隙，形成斑驳的光影，宛如童话世界</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- 相册卡片4 -->
-                <div class="card">
-                    <div class="card-inner">
-                        <div class="card-front">
-                            <img src="https://picsum.photos/300/200?random=5" alt="风景照片4">
-                            <div class="card-title">城市夜景</div>
-                        </div>
-                        <div class="card-back">
-                            <p>夜幕降临，城市的灯光次第亮起，勾勒出繁华的轮廓，这是都市独有的浪漫与活力</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 联系区域 -->
-        <section class="contact" id="contact">
-            <h2 class="section-title">与我取得联系</h2>
-            <div class="contact-links">
-                <div class="contact-item">
-                    <div class="icon">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <a href="mailto:example@mail.com">example@mail.com</a>
-                </div>
-                <div class="contact-item">
-                    <div class="icon">
-                        <i class="fas fa-weixin"></i>
-                    </div>
-                    <a href="#">QQ：3532472526</a>
-                </div>
-                <div class="contact-item">
-                    <div class="icon">13:32 2025/12/26
-                        <i class="fas fa-github"></i>
-                    </div>
-                    <a href="https://github.com" target="_blank">GitHub</a>
-                </div>
-                <div class="contact-item">
-                    <div class="icon">
-                        <i class="fas fa-phone"></i>
-                    </div>
-                    <a href="tel:xxxxxxxxxxx">xxx-xxxx-xxxx</a>
-                </div>
-            </div>
-        </section>
+    <!-- 星空背景 -->
+    <div class="star-bg" id="stars"></div>
+    
+    <!-- 水印 -->
+    <div class="watermark">UNIQUE-000-STAR</div>
+    
+    <!-- 迷宫容器 -->
+    <div class="maze-container">
+        <h1 class="maze-title glow">星穹迷宫</h1>
+        <p class="maze-desc">
+            欢迎来到数字宇宙的终极迷宫。这里每一格都通往不同的时空维度，由量子数据编织而成。只有心灵纯净的旅人，才能找到通往星核的路径。
+        </p>
+        
+      
+        <!-- 粒子 -->
+        <div class="particles" id="particles"></div>
     </div>
-
-    <!-- 页脚 -->
-    <footer class="footer">
-        <p>© 2025 星芒集 - 独一无二的静态展示页 | 无需后端 · 纯前端实现</p>
-    </footer>
-
-    <!-- 粒子背景脚本 -->
+    
     <script>
-        // 粒子背景实现
-        class Particle {
-            constructor(canvas, ctx) {
-                this.canvas = canvas;
-                this.ctx = ctx;
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = Math.random() * 0.5 - 0.25;
-                this.speedY = Math.random() * 0.5 - 0.25;
-                this.color = `rgba(137, 43, 226, ${Math.random() * 0.7 + 0.3})`;
-            }
-
-            update() {
-                // 边界检测与反弹
-                if (this.x > this.canvas.width || this.x < 0) {
-                    this.speedX = -this.speedX;
-                }
-                if (this.y > this.canvas.height || this.y < 0) {
-                    this.speedY = -this.speedY;
-                }
-                this.x += this.speedX;
-                this.y += this.speedY;
-            }
-
-            draw() {
-                this.ctx.fillStyle = this.color;
-                this.ctx.beginPath();
-                this.ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                this.ctx.fill();
+        // 生成星空
+        function createStars() {
+            const stars = document.getElementById('stars');
+            const count = 200;
+            
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.width = `${Math.random() * 2 + 1}px`;
+                star.style.height = `${Math.random() * 2 + 1}px`;
+                star.style.opacity = Math.random();
+                stars.appendChild(star);
             }
         }
-
-        // 初始化粒子背景
-        function initParticles() {
-            const particleBg = document.getElementById('particle-bg');
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            particleBg.appendChild(canvas);
-
-            // 设置画布尺寸
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+        
+        // 创建粒子
+        function createParticles() {
+            const particles = document.getElementById('particles');
+            const count = 50;
+            
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                particles.appendChild(particle);
             }
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
-
-            // 创建粒子数组
-            const particles = [];
-            const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
-
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle(canvas, ctx));
-            }
-
-            // 动画循环
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(particle => {
-                    particle.update();
-                    particle.draw();
-                    // 绘制粒子之间的连线
-                    particles.forEach(otherParticle => {
-                        const dx = particle.x - otherParticle.x;
-                        const dy = particle.y - otherParticle.y;
-                        const distance = Math.sqrt(dx * dx + dy * dy);
-                        if (distance < 100) {
-                            ctx.strokeStyle = `rgba(137, 43, 226, ${0.2 - distance / 500})`;
-                            ctx.lineWidth = 0.5;
-                            ctx.beginPath();
-                            ctx.moveTo(particle.x, particle.y);
-                            ctx.lineTo(otherParticle.x, otherParticle.y);
-                            ctx.stroke();
-                        }
-                    });
-                });
-                requestAnimationFrame(animate);
-            }
-            animate();
-
-            // 鼠标交互（粒子跟随鼠标）
-            canvas.addEventListener('mousemove', (e) => {
-                particles.forEach(particle => {
-                    const dx = particle.x - e.clientX;
-                    const dy = particle.y - e.clientY;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < 150) {
-                        particle.x += dx / 20;
-                        particle.y += dy / 20;
-                    }
-                });
-            });
         }
-
-        // 页面加载完成后初始化粒子背景
-        window.addEventListener('load', initParticles);
-
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                window.scrollTo({
-                    top: targetElement.offsetTop - 80,
-                    behavior: 'smooth'
+        
+        // 开启迷宫
+        function openMaze(id) {
+            // 模拟加载
+            const loading = document.createElement('div');
+            loading.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                font-size: 2rem;
+                z-index: 1000;
+                transform: scale(1.1);
+                opacity: 0;
+                animation: fadeIn 0.5s forwards;
+            `;
+            loading.textContent = `连接维度 ${id}...`;
+            document.body.appendChild(loading);
+            
+            // 模拟延迟
+            setTimeout(() => {
+                const error = Math.random() > 0.8;
+                if (error) {
+                    document.getElementById('error').style.display = 'flex';
+                    document.getElementById('error').style.animation = 'slideUp 0.5s forwards';
+                } else {
+                    window.location.href = `dimension-${id}.html`;
+                }
+            }, 1500);
+        }
+        
+        // 重置错误
+        function resetError() {
+            document.getElementById('error').style.display = 'none';
+        }
+        
+        // 联系开发者
+        function contactDeveloper() {
+            window.open('https://star-universe.net/contact', '_blank');
+        }
+        
+        // 初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            createStars();
+            createParticles();
+            
+            // 添加鼠标移动效果
+            document.addEventListener('mousemove', (e) => {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                const stars = document.querySelectorAll('.star');
+                stars.forEach(star => {
+                    star.style.transform = `translate(${x * 50}px, ${y * 50}px)`;
+                });
+                
+                const particles = document.querySelectorAll('.particle');
+                particles.forEach(particle => {
+                    particle.style.transform = `translate(${x * 20}px, ${y * 20}px)`;
                 });
             });
         });
